@@ -15,4 +15,4 @@ After success soldering, find bus you connect to with i2cdetect. The required bu
 
 ![img](https://pp.vk.me/c836536/v836536683/17286/1u5PA1j18cE.jpg)
 
-!(https://pp.vk.me/c836536/v836536683/17310/Y65rbsxkf20.jpg)
+![img](https://pp.vk.me/c836536/v836536683/17310/Y65rbsxkf20.jpg)
