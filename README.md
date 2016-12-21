@@ -13,3 +13,4 @@ In general, dont do it if you cannot hold the soldering iron.
 After success soldering, find bus you connect to with i2cdetect. The required bus will has device on 0x3C (0x3D if you change the jumper on display). Fix bus in code to your bus.
 
 
+![img](https://pp.vk.me/c836536/v836536683/17286/1u5PA1j18cE.jpg)
