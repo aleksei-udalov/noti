@@ -9,3 +9,7 @@ Connect to VGA is more safe then to RAM, but some motherboards doesnot give i2c 
 Connect to RAM 100% works, but its complicated because there is very small lines.
 
 In general, dont do it if you cannot hold the soldering iron.
+
+After success soldering, find bus you connect to with i2cdetect. The required bus will has device on 0x3C (0x3D if you change the jumper on display). Fix bus in code to your bus.
+
+
