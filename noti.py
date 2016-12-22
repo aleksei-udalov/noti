@@ -93,7 +93,10 @@ def render_temp(draw):
 
 def render_weather(draw):
     draw.text(CITY_POS, WEATHER_CITY, fill=255)
-    if not weather_enabled or weather is None:
+    if not weather_enabled:
+        return
+    if weather is None:
+        draw.text(WEATHER_POS, 'no weather data', fill=255)
         return
     temp = weather['main']['temp'] - ABSOLUTE_ZERO
     temp = round(temp, 1)
@@ -129,7 +132,7 @@ def get_weather():
         return
     try:
         return json.loads(requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + WEATHER_CITY + ',' + WEATHER_COUNTRY + '&Appid=' + WEATHER_KEY).content.decode('UTF-8'))
-    except:
+    except requests.exceptions.ConnectionError:
         return None
 
 disp = x86SSD1306()
@@ -166,6 +169,6 @@ while True:
     disp.display()
     sleep(1.5)
     weather_counter += 1
-    if weather_counter == 400: # 1 request in 30 minutes
+    if weather is None or weather_counter == 400: # 1 request in 30 minutes
         weather = get_weather()
         weather_counter = 0
