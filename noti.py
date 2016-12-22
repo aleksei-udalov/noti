@@ -92,9 +92,9 @@ def render_temp(draw):
     draw.text(CPU_TEMP_POS, 'CPU: ' + str(get_cpu_temp())+' C', fill=255)
 
 def render_weather(draw):
-    if not weather_enabled:
-        return
     draw.text(CITY_POS, WEATHER_CITY, fill=255)
+    if not weather_enabled or weather is None:
+        return
     temp = weather['main']['temp'] - ABSOLUTE_ZERO
     temp = round(temp, 1)
     if temp > 0:
@@ -127,7 +127,10 @@ def show_bat_warning():
 def get_weather():
     if not weather_enabled:
         return
-    return json.loads(requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + WEATHER_CITY + ',' + WEATHER_COUNTRY + '&Appid=' + WEATHER_KEY).content.decode('UTF-8'))
+    try:
+        return json.loads(requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + WEATHER_CITY + ',' + WEATHER_COUNTRY + '&Appid=' + WEATHER_KEY).content.decode('UTF-8'))
+    except:
+        return None
 
 disp = x86SSD1306()
 disp.begin()
