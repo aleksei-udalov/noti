@@ -22,7 +22,7 @@ class customi2c:
 
 
 class x86SSD1306(SSD1306_128_64):
-    def __init__(self, addr=0x3C, bus=9):
+    def __init__(self, addr=0x3C, bus=0):
         return super().__init__(rst=None, gpio=dummy(), i2c=customi2c(bus, addr))
     
     def reset(self):

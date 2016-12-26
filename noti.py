@@ -9,6 +9,7 @@ import math
 import psutil
 import requests
 import json
+import calendar
 
 weather_enabled = True
 try:
@@ -16,25 +17,25 @@ try:
 except:
     weather_enabled = False
     print('weather disabled, go to http://openweathermap.org and get API key')
-
+COMMAND_MODPROBE = 'modprobe i2c-dev'
 COMMAND_BAT_LEVEL = 'cat /sys/class/power_supply/BAT0/capacity'
 BAT_WARN_LEVEL = 50
 COMMAND_AC_ONLINE = 'cat /sys/class/power_supply/AC/online'
-BAT_POS = (1, 2)
+BAT_POS = (1, 40)
 BAT_SIZE = (50, 6)
-CLOCK_POS = (62, 0)
+CLOCK_POS = (1, 0)
 BAT_WARN_POS = (44, 28)
 CPU_POS = (1, 12)
 CPU_SIZE = (127, 16)
-MEM_POS = (1, 29)
+MEM_POS = (1, 30)
 MEM_SIZE = (125, 6)
 COMMAND_GET_TEMP = 'cat /sys/class/thermal/thermal_zone0/temp'
-CPU_TEMP_POS = (1, 37)
+CPU_TEMP_POS = (64, 38)
 ABSOLUTE_ZERO = 273.15
 WEATHER_CITY = 'Saratov'
 WEATHER_COUNTRY = 'ru'
 CITY_POS = (80, 37)
-WEATHER_POS = (1, 48)
+WEATHER_POS = (1, 50)
 
 def percent_rectangle(r, percent):
     r[2] = r[0] + (r[2] - r[0]) * percent // 100
@@ -65,14 +66,15 @@ def render_bat(draw):
     percent_rectangle(r, get_bat_level())
     draw.rectangle(r, fill=255)
     if is_ac_online():
-        draw.text((BAT_POS[0] + BAT_SIZE[0] + 2, BAT_POS[0] - 1), '+', fill=255)
+        draw.text((BAT_POS[0] + BAT_SIZE[0] + 2, BAT_POS[1] - 2), '+', fill=255)
 
 def render_clock(draw):
     t = datetime.datetime.time(datetime.datetime.now())
-    d = datetime.datetime.date(datetime.datetime.now())
+    d = datetime.date.today() #.date(datetime.datetime.now())
     day = str(d.day)
     month = str(d.month)
-    draw.text(CLOCK_POS, t.isoformat()[:5]+' '+day+'.'+month,  fill=255)
+    weekday = calendar.day_name[d.weekday()]
+    draw.text(CLOCK_POS, t.isoformat()[:5]+' '+day+'.'+month+' '+weekday,  fill=255)
 
 def render_cpu(draw):
     for r, percent in zip(cpu_rectangles, psutil.cpu_percent(percpu=True)):
@@ -86,13 +88,13 @@ def render_mem(draw):
     draw.rectangle(r, fill=255)
 
 def get_cpu_temp():
-    return int(subprocess.getoutput(COMMAND_GET_TEMP)) / 1000
+    return int(subprocess.getoutput(COMMAND_GET_TEMP)) // 1000
 
 def render_temp(draw):
     draw.text(CPU_TEMP_POS, 'CPU: ' + str(get_cpu_temp())+' C', fill=255)
 
 def render_weather(draw):
-    draw.text(CITY_POS, WEATHER_CITY, fill=255)
+#draw.text(CITY_POS, WEATHER_CITY, fill=255)
     if not weather_enabled:
         return
     if weather is None:
@@ -132,9 +134,9 @@ def get_weather():
         return
     try:
         return json.loads(requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + WEATHER_CITY + ',' + WEATHER_COUNTRY + '&Appid=' + WEATHER_KEY).content.decode('UTF-8'))
-    except requests.exceptions.ConnectionError:
+    except:
         return None
-
+subprocess.getoutput(COMMAND_MODPROBE)
 disp = x86SSD1306()
 disp.begin()
 
