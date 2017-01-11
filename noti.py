@@ -94,7 +94,6 @@ def render_temp(draw):
     draw.text(CPU_TEMP_POS, 'CPU: ' + str(get_cpu_temp())+' C', fill=255)
 
 def render_weather(draw):
-#draw.text(CITY_POS, WEATHER_CITY, fill=255)
     if not weather_enabled:
         return
     if weather is None:
@@ -136,8 +135,17 @@ def get_weather():
         return json.loads(requests.get('http://api.openweathermap.org/data/2.5/weather?q=' + WEATHER_CITY + ',' + WEATHER_COUNTRY + '&Appid=' + WEATHER_KEY).content.decode('UTF-8'))
     except:
         return None
+        
+def find_bus():
+    for i in (0, 9) + tuple(range(1, 9)):
+        print('checking bus %i' % i)
+        if subprocess.getoutput('i2cdetect -y %i | grep 3c > /dev/null ; echo $?' % i) == '0':
+            print('device found')
+            return i
+    raise Exception('cannot found device')
+        
 subprocess.getoutput(COMMAND_MODPROBE)
-disp = x86SSD1306()
+disp = x86SSD1306(bus=find_bus())
 disp.begin()
 
 cpu_count = len(psutil.cpu_percent(percpu=True))
