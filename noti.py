@@ -44,7 +44,10 @@ def get_rectangle(POS, SIZE):
     return [POS[0], POS[1], SIZE[0] + POS[0], SIZE[1] + POS[1]]
 
 def get_bat_level():
-    return int(subprocess.getoutput(COMMAND_BAT_LEVEL))
+    try:
+        return int(subprocess.getoutput(COMMAND_BAT_LEVEL))
+    except:
+        return None
 
 def is_ac_online():
     return int(subprocess.getoutput(COMMAND_AC_ONLINE))
@@ -63,8 +66,13 @@ def make_template():
 
 def render_bat(draw):
     r = get_rectangle(BAT_POS, BAT_SIZE)
-    percent_rectangle(r, get_bat_level())
-    draw.rectangle(r, fill=255)
+    bat_level = get_bat_level()
+    if bat_level is not None:
+        percent_rectangle(r, get_bat_level())
+        draw.rectangle(r, fill=255)
+    else:
+        draw.rectangle(r, fill=0)
+        draw.text((BAT_POS[0], BAT_POS[1] - 2), '   ???', fill=255)
     if is_ac_online():
         draw.text((BAT_POS[0] + BAT_SIZE[0] + 2, BAT_POS[1] - 2), '+', fill=255)
 
@@ -171,12 +179,15 @@ weather = get_weather()
 weather_counter = 0
 
 while True:
-    if get_bat_level() < BAT_WARN_LEVEL and not is_ac_online():
+    if not is_ac_online() and get_bat_level() < BAT_WARN_LEVEL:
         show_bat_warning()
     image = render(template)
 #    image.save('out.jpg')
-    disp.image(image)
-    disp.display()
+    try:
+        disp.image(image)
+        disp.display()
+    except:
+        pass
     sleep(1.5)
     weather_counter += 1
     if weather is None or weather_counter == 400: # 1 request in 30 minutes
