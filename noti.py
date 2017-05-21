@@ -36,6 +36,7 @@ WEATHER_CITY = 'Saratov'
 WEATHER_COUNTRY = 'ru'
 CITY_POS = (80, 37)
 WEATHER_POS = (1, 50)
+COMMAND_FREQ = 'cat /proc/cpuinfo'
 
 def percent_rectangle(r, percent):
     r[2] = r[0] + (r[2] - r[0]) * percent // 100
@@ -98,8 +99,13 @@ def render_mem(draw):
 def get_cpu_temp():
     return int(subprocess.getoutput(COMMAND_GET_TEMP)) // 1000
 
+def get_cpu_freq():
+    return int(float(max([x.split()[-1] for x in subprocess.getoutput(COMMAND_FREQ).split('\n') if x.startswith('cpu MHz')])))
+
+font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf', 8)
+
 def render_temp(draw):
-    draw.text(CPU_TEMP_POS, 'CPU: ' + str(get_cpu_temp())+' C', fill=255)
+    draw.text(CPU_TEMP_POS, str(get_cpu_freq()) + ' / ' + str(get_cpu_temp()), fill=255)
 
 def render_weather(draw):
     if not weather_enabled:
