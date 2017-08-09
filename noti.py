@@ -32,7 +32,8 @@ MEM_SIZE = (125, 6)
 COMMAND_GET_TEMP = 'cat /sys/class/thermal/thermal_zone0/temp'
 CPU_TEMP_POS = (64, 38)
 ABSOLUTE_ZERO = 273.15
-WEATHER_CITY = 'Saratov'
+#WEATHER_CITY = 'Saratov'
+WEATHER_CITY = 'Saint Petersburg'
 WEATHER_COUNTRY = 'ru'
 CITY_POS = (80, 37)
 WEATHER_POS = (1, 50)
@@ -105,7 +106,7 @@ def get_cpu_freq():
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf', 8)
 
 def render_temp(draw):
-    draw.text(CPU_TEMP_POS, str(get_cpu_freq()) + ' / ' + str(get_cpu_temp()), fill=255)
+    draw.text(CPU_TEMP_POS, '{:>4} / {}'.format(str(get_cpu_freq()), str(get_cpu_temp())), fill=255)
 
 def render_weather(draw):
     if not weather_enabled:
